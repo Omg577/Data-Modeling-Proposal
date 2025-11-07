@@ -26,4 +26,6 @@ Paulo Cortez and Alice Silva are the authors of the dataset. This data was colle
 
 ## Include a description of a graph which will show how the data informs the primary question of interest.
 
+We can take the variables for G3 (final grade) and failures (number of past failures), and construct a box-plot which can clearly show the mean, and IQR of each number of past failures (0,1,2,3). Clearly visualizing the relationship between past failures and how they influence final grade.
+
 
