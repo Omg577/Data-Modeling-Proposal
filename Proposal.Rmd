@@ -13,19 +13,20 @@ knitr::opts_chunk$set(echo = TRUE)
 Om Gulati, Noah Serrault, Owen Richards
 
 ## A brief description of how the group will communicate and work together.
-As a group, we plan to check-in each Friday morning at the library and communicate over text if anything comes up. If text isn't sufficient / our meeting times on Friday mornings, we will add an additional meeting Monday mornings to get the work done.
+As a group, we plan to check-in each Friday morning at the library and communicate over text if anything comes up. If text isn't sufficient / our meeting times on Friday mornings, we will add an additional meeting Monday mornings to get the work done. Additionally, we plan to store shared files (such as this proposal) in a shared GitHub repository so we can effectively communicate together.
 
 ## The question or questions of interest that motivate the planned study.
 How are prior course failures related to students' final math achievement?
 
 ## The source(s) of data.
 https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance
+The link above contains a download button for a csv and we'll load it into R studio with read.csv().
 
 ## A description of the data. Include in this description answers to these questions:
 Paulo Cortez and Alice Silva are the authors of the dataset. This data was collected by using school reports and questionnaires for two secondary educational Portuguese schools. The variables we plan to use are G3 (this is the final grade) and failures, which is number of past class failures. This is related to our question because we are using past class failures to predict final grade. 
 
 ## Include a description of a graph which will show how the data informs the primary question of interest.
 
-We can take the variables for G3 (final grade) and failures (number of past failures), and construct a box-plot which can clearly show the mean, and IQR of each number of past failures (0,1,2,3). Clearly visualizing the relationship between past failures and how they influence final grade.
+We can take the variables for G3 (final grade) and failures (number of past failures), and construct a box-plot which can clearly show the median, and IQR of each number of past failures (0,1,2,3). Clearly visualizing the relationship between past failures and how they influence final grade. Additionally, we plan to use linear regression to estimate the average change in final grade per prior failure.
 
 

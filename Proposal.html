@@ -365,7 +365,9 @@ together.</h2>
 <p>As a group, we plan to check-in each Friday morning at the library
 and communicate over text if anything comes up. If text isn’t sufficient
 / our meeting times on Friday mornings, we will add an additional
-meeting Monday mornings to get the work done.</p>
+meeting Monday mornings to get the work done. Additionally, we plan to
+store shared files (such as this proposal) in a shared GitHub repository
+so we can effectively communicate together.</p>
 </div>
 <div id="the-question-or-questions-of-interest-that-motivate-the-planned-study." class="section level2">
 <h2>The question or questions of interest that motivate the planned
@@ -375,7 +377,9 @@ achievement?</p>
 </div>
 <div id="the-sources-of-data." class="section level2">
 <h2>The source(s) of data.</h2>
-<p><a href="https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance" class="uri">https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance</a></p>
+<p><a href="https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance" class="uri">https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance</a>
+The link above contains a download button for a csv and we’ll load it
+into R studio with read.csv().</p>
 </div>
 <div id="a-description-of-the-data.-include-in-this-description-answers-to-these-questions" class="section level2">
 <h2>A description of the data. Include in this description answers to
@@ -392,9 +396,10 @@ past class failures to predict final grade.</p>
 informs the primary question of interest.</h2>
 <p>We can take the variables for G3 (final grade) and failures (number
 of past failures), and construct a box-plot which can clearly show the
-mean, and IQR of each number of past failures (0,1,2,3). Clearly
+median, and IQR of each number of past failures (0,1,2,3). Clearly
 visualizing the relationship between past failures and how they
-influence final grade.</p>
+influence final grade. Additionally, we plan to use linear regression to
+estimate the average change in final grade per prior failure.</p>
 </div>
 
 
