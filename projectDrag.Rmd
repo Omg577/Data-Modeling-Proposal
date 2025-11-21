@@ -1,0 +1,38 @@
+---
+title: "projectData"
+author: "Noah Serrault"
+date: "2025-11-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+
+df <- read.csv("/mnt/data/student_data/student-mat.csv", sep = ";")
+
+df <- df %>%
+  transmute(
+    G3,
+    failures,
+    has_failure = as.integer(failures > 0),   # 0/1
+    pass_math   = as.integer(G3 >= 10)        # 0/1
+  )
+
+str(df)
+
+g0 <- subset(df, has_failure == 0)$G3
+g1 <- subset(df, has_failure == 1)$G3
+
+# Descriptives
+c(n0 = length(g0), mean0 = mean(g0), sd0 = sd(g0))
+c(n1 = length(g1), mean1 = mean(g1), sd1 = sd(g1))
+
+# Welch two-sample t test (default var.equal = FALSE)
+t_out <- t.test(G3 ~ has_failure, data = df, conf.level = 0.95)
+t_out
+
+```
