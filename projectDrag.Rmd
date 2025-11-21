@@ -10,29 +10,91 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+# --- Packages ---------------------------------------------------------------
 library(dplyr)
+library(broom)
+library(ggplot2)  # <--- Added this so your graphs work!
 
-df <- read.csv("/mnt/data/student_data/student-mat.csv", sep = ";")
+# --- Data Loading -----------------------------------------------------------
+# Check where R is looking (Output appears in console/markdown)
 
+df <- read.csv("student.csv", sep = ";")
+
+# --- Data Cleaning ----------------------------------------------------------
+# Use mutate instead of transmute to keep original data available if needed
 df <- df %>%
-  transmute(
-    G3,
-    failures,
-    has_failure = as.integer(failures > 0),   # 0/1
-    pass_math   = as.integer(G3 >= 10)        # 0/1
+  mutate(
+    has_failure = as.integer(failures > 0),  # 0 = none, 1 = ≥1
+    pass_math   = as.integer(G3 >= 10)       # 0 = fail, 1 = pass
   )
 
-str(df)
+# Quick sanity checks
+summary(df$G3)
+table(df$has_failure)
+table(df$pass_math)
 
-g0 <- subset(df, has_failure == 0)$G3
-g1 <- subset(df, has_failure == 1)$G3
+# --- Analysis ---------------------------------------------------------------
 
-# Descriptives
-c(n0 = length(g0), mean0 = mean(g0), sd0 = sd(g0))
-c(n1 = length(g1), mean1 = mean(g1), sd1 = sd(g1))
+# Method 1: Compare two population means (Welch two-sample t-test)
+# H0: mean(G3 | has_failure=0) = mean(G3 | has_failure=1)
+means_by_group <- df %>%
+  group_by(has_failure) %>%
+  summarise(n = n(), mean_G3 = mean(G3), sd_G3 = sd(G3), .groups = "drop")
+print(means_by_group)
 
-# Welch two-sample t test (default var.equal = FALSE)
-t_out <- t.test(G3 ~ has_failure, data = df, conf.level = 0.95)
-t_out
+t_out <- t.test(G3 ~ has_failure, data = df, var.equal = FALSE, conf.level = 0.95)
+print(t_out) # Added print so you see the result in the knitted doc
 
+tab <- with(df, table(has_failure, pass_math))
+print(tab)
 ```
+
+
+```{r, echo=FALSE}
+# Graph 1: Boxplot
+ggplot(df, aes(x = factor(has_failure, levels = c(0,1), labels = c("No Failures","Prior Failures")),
+               y = G3)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Final Grade (G3) by Prior Failures",
+    x = "Status",
+    y = "Final Grade (G3)"
+  ) +
+  theme_minimal()
+
+# Graph 2: Jitter + Regression
+ggplot(df, aes(x = failures, y = G3)) +
+  geom_jitter(width = 0.1, height = 0, alpha = 0.7) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(
+    title = "Relationship Between Number of Failures and Final Grade",
+    x = "Number of Prior Failures",
+    y = "Final Grade (G3)"
+  ) +
+  theme_minimal()
+
+# Graph 3: Bar Chart of Proportions
+sum2 <- df %>%
+  group_by(has_failure) %>%
+  summarise(
+    n = n(),
+    pass_rate = mean(pass_math),
+    .groups = "drop"
+  )
+
+ggplot(sum2, aes(x = factor(has_failure, levels = c(0,1), labels = c("No Failures","Prior Failures")),
+                 y = pass_rate)) +
+  geom_col(fill = "steelblue") +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(
+    title = "Proportion Passing (G3 ≥ 10) by Prior Failures",
+    x = "Status",
+    y = "Proportion Passing"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+
