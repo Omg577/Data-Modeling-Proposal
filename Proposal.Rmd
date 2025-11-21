@@ -29,4 +29,4 @@ Paulo Cortez and Alice Silva are the authors of the dataset. This data was colle
 
 We can take the variables for G3 (final grade) and failures (number of past failures), and construct a box-plot which can clearly show the median, and IQR of each number of past failures (0,1,2,3). Clearly visualizing the relationship between past failures and how they influence final grade. Additionally, we plan to use linear regression to estimate the average change in final grade per prior failure.
 
-
+Hello
