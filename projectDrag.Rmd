@@ -1,7 +1,7 @@
 ---
 title: "Project Draft"
 author: "Noah Serrault, Owen Richards, Om Gulati"
-date: "2025-11-21"
+date: "2025-11-26"
 output: html_document
 ---
 
@@ -13,13 +13,13 @@ This report argues that the number of past course failures are negatively associ
 
 # Background
 
-The data for this project comes from the Student Performance dataset hosted on the UC Irvine Machine Learning Repository which is collected and analyzed by Paulo Cortez and Alice Silva in 2008. The dataset contains information on 649 secondary school students from two Portuguese schools. For each student, school records and questionnaires were used to collect a wide range of variables describing academic performance, demographic characteristics, family background, and school-related behaviors. In total, there are 33 features per student, including grades, age, parental education, study time, and measures of social and family support.
+The data for this project come from the [Student Performance dataset hosted on the UC Irvine Machine Learning Repository](https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance) which is collected and analyzed by Paulo Cortez and Alice Silva in 2008. The dataset contains information on 649 secondary school students from two Portuguese schools. For each student, school records and questionnaires were used to collect a wide range of variables describing academic performance, demographic characteristics, family background, and school-related behaviors. In total, there are 33 features per student, including grades, age, parental education, study time, and measures of social and family support.
 
-There is two datasets are available on the website. One for mathematics achievement and one for Portuguese language achievement. In this project, we focus on the mathematics dataset, where the main outcome variable of interest is G3, the final grade in the course. This grade is recorded at the end of the year and is intended to summarize each student's overall performance in mathematics. Another key variable for our study is failures, which records the number of past course failures for that student (coded as a small integer count). We are interested in understanding how this history of prior failures relates to students' final performance in math, as measured by G3.
+There is two datasets are available on the website. One for mathematics achievement and one for Portuguese language achievement. In this project, we focus on the mathematics dataset, where the main outcome variable of interest is G3, the final grade in the course. This grade is recorded at the end of the year and is intended to summarize each student's overall performance in mathematics. Another key variable for our study is failures, which records the number of past course failures for that student. We are interested in understanding how this history of prior failures relates to students' final performance in math, as measured by G3.
 
 There are a few other important considerations and limitations for interpreting our findings. First, the data come from only two schools in Portugal, so the results may not generalize to all school systems or countries such as the United States. Second, data was collected in 2008, which was during a worldwide economic crisis which could directly impact student performance creating a statistical anomaly.
 
-In the rest of the report, we plan to explore the relationship between prior failures and final math achievement using both graphical and statistical methods. We will begin with [insert exact methods we use here]
+In the rest of the report, we plan to explore the relationship between prior failures and final math achievement using both graphical and statistical methods. We will use a welch two sample t-test, a two sample proportion test, box plot, scatter plot, and bar graph to analyze the relationship.   
 
 
 ```{r, echo=FALSE, include=FALSE}
