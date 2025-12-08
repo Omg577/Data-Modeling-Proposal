@@ -53,7 +53,7 @@ t_out <- t.test(G3 ~ has_failure, data = df, var.equal = FALSE, conf.level = 0.9
 
 ### Data - Notes on data preperations
 
-In our data set we have many variables that could help us find what helps students. In this analysis we specifically are focusing on the column which includes the number of prior courses they have failed; ranging from 0-3. And their final exam score. Which is scored on a 0-20 scale. 
+In our data set we have many variables that could help us find what helps students. In this analysis we specifically are focusing on the column which includes the number of prior courses they have failed (failures); ranging from 0-3. And their final exam score. Which is scored on a 0-20 scale (G3). 
 
 To be considered passing the students must have a greater or equal to a 10/20 on the G3 exam which is processed into our proportion passing. And to be considered to have prior failures we consider anything greater then 0 prior course failures to be No Failures or Prior Failures.
  
