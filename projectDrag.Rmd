@@ -7,19 +7,17 @@ output: html_document
 
 # Introduction
 
-Student performance is influenced by a variety of both personal and academic factors, but one consistent indicator is a student’s prior academic history. By understanding how past course failures relate to final math achievement, educators can identify at-risk students and design interventions. Our study seeks to answer the question: How are prior course failures related to students’ final math achievement? Through examining data from secondary students in Portugal, we look to find whether a pattern exists between the number of past failures and performance in a final math course.
-Thesis statement: 
-This report argues that the number of past course failures are negatively associated with the students’ final grade. Through visual and statistical analysis, we demonstrate that as the number of previous failures increases, the mean final grade tends to decrease.
+Student performance is influenced by a variety of both personal and academic factors, but one consistent indicator is a student’s prior academic history. By understanding how past course failures relate to final math achievement, educators can identify at-risk students and design interventions. Our study seeks to answer the question: How are prior course failures related to students’ final math achievement? Through examining data from secondary students in Portugal, we look to find whether a pattern exists between the number of past failures and performance in a final math course. This report argues that the number of past course failures are negatively associated with the students’ final grade. Through visual and statistical analysis, we demonstrate that as the number of previous failures increases, the mean final grade tends to decrease.
 
 # Background
 
-The data for this project come from the [Student Performance dataset hosted on the UC Irvine Machine Learning Repository](https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance) which is collected and analyzed by Paulo Cortez and Alice Silva in 2008. The dataset contains information on 649 secondary school students from two Portuguese schools. For each student, school records and questionnaires were used to collect a wide range of variables describing academic performance, demographic characteristics, family background, and school-related behaviors. In total, there are 33 features per student, including grades, age, parental education, study time, and measures of social and family support.
+In terms of coming up with the idea for this project, our group was interested in learning more about the factors that influence student performance, being students ourselves. The data for this project comes from the [Student Performance dataset hosted on the UC Irvine Machine Learning Repository](https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance) which is collected and analyzed by Paulo Cortez and Alice Silva in 2008. The dataset contains information on 649 secondary school students from two Portuguese schools. For each student, school records and questionnaires were used to collect a wide range of variables describing academic performance, demographic characteristics, family background, and school-related behaviors. In total, there are 33 features per student, including grades, age, parental education, study time, and measures of social and family support.
 
-There is two datasets are available on the website. One for mathematics achievement and one for Portuguese language achievement. In this project, we focus on the mathematics dataset, where the main outcome variable of interest is G3, the final grade in the course. This grade is recorded at the end of the year and is intended to summarize each student's overall performance in mathematics. Another key variable for our study is failures, which records the number of past course failures for that student. We are interested in understanding how this history of prior failures relates to students' final performance in math, as measured by G3.
+There are two datasets available on the website: one for mathematics achievement and one for Portuguese language achievement. In this project, we will focus on the mathematics dataset, where the main outcome variable of interest is G3, the final grade in the current course. This grade is recorded at the end of the year, and is intended to summarize each student's overall performance in mathematics. Another key variable for our study is failures, which records the number of past course failures for that student. We are interested in understanding how this history of prior failures relates to students' final performance in math, as measured by G3.
 
-There are a few other important considerations and limitations for interpreting our findings. First, the data come from only two schools in Portugal, so the results may not generalize to all school systems or countries such as the United States. Second, data was collected in 2008, which was during a worldwide economic crisis which could directly impact student performance creating a statistical anomaly.
+There are a few other important considerations and limitations for interpreting our findings. First, the data comes from only two schools in Portugal, so the results may not generalize to all school systems or countries such as the United States. Second, data was collected in 2008, which was during a worldwide economic crisis. This could directly impact student performance, creating a statistical anomaly. 
 
-In the rest of the report, we plan to explore the relationship between prior failures and final math achievement using both graphical and statistical methods. We will use a welch two sample t-test, a two sample proportion test, box plot, scatter plot, and bar graph to analyze the relationship.   
+In the rest of the report, we plan to explore the relationship between prior failures and final math achievement using both graphical and statistical methods. We will use a welch two sample t-test, a two sample proportion test, box plot, scatter plot, and bar graph to analyze the relationship. 
 
 
 ```{r, echo=FALSE, include=FALSE}
@@ -52,6 +50,14 @@ print(means_by_group)
 
 t_out <- t.test(G3 ~ has_failure, data = df, var.equal = FALSE, conf.level = 0.95)
 ```
+
+### Data - Notes on data preperations
+
+In our data set we have many variables that could help us find what helps students. In this analysis we specifically are focusing on the column which includes the number of prior courses they have failed; ranging from 0-3. And their final exam score. Which is scored on a 0-20 scale. 
+
+To be considered passing the students must have a greater or equal to a 10/20 on the G3 exam which is processed into our proportion passing. And to be considered to have prior failures we consider anything greater then 0 prior course failures to be No Failures or Prior Failures.
+ 
+We do use the absolute number of course failures (0-3) in the scatter plot to extend our analysis beyond "has any failures".
 
 # Analysis 
 
@@ -95,7 +101,7 @@ kable(prop_results, digits = 3, caption = "Two-Sample Proportion Test Results")
 
 #### Graphs
 
-The first plot helps to visualize the distribution of scores for students who did have, and did not have prior failures. Helping to visualize the first statistical analysis we did earlier looking at mean scores between students with past failures. With prior failures on the X axis and a box plot on the y axis with final G3 score.
+The first box plot of the final G3 score (Y-axis) grouped by prior course failures (X-axis) helps to visualize the distribution of scores for students who did have, and did not have prior failures. Helping to visualize the first statistical analysis we did earlier looking at mean scores between students with past failures. With prior failures on the X axis and a box plot on the y axis with final G3 score.
 
 ```{r, echo=FALSE}
 # Graph 1: Boxplot
@@ -111,7 +117,7 @@ ggplot(df, aes(x = factor(has_failure, levels = c(0,1), labels = c("No Failures"
 
 ```
 
-This second plot helps visualize the second statistical method clearly showing the difference in proportion of students who passed the course and didn't pass the course based on if they had prior course failures. With prior failures on the X axis and proportion of students passing on the Y axis.
+The histogram with proportion passing G3 exam (Y-axis) grouped by prior course failures (X-Axis) helps visualize the second statistical method clearly showing the difference in proportion of students who passed the course and didn't pass the course. Based on if they had prior course failures.
 
 ```{r, echo=FALSE}
 # Graph 3: Bar Chart of Proportions
@@ -135,7 +141,7 @@ ggplot(sum2, aes(x = factor(has_failure, levels = c(0,1), labels = c("No Failure
   theme_minimal()
 ```
 
-This last plot helps to visualize the relationship between 0 and 3 course failures and the students final G3 score. Plotting the line using a scatter plot and a line of best fit. With the number of course failures on the X axis and the students final G3 score on the Y axis.
+This scatter plot with Final Grade (G3) (Y-Axis) with number of course failures (X-Axis) helps to visualize the relationship between 0, 2, and 3 course failures and the students final G3 score. Plotting the line using a scatter plot and a line of best fit. With the number of course failures on the X axis and the students final G3 score on the Y axis.
 
 ``` {r, echo=FALSE}
 
