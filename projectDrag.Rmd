@@ -11,7 +11,7 @@ Student performance is influenced by a variety of both personal and academic fac
 
 # Background
 
-In terms of coming up with the idea for this project, our group was interested in learning more about the factors that influence student performance, being students ourselves. The data for this project comes from the [Student Performance dataset hosted on the UC Irvine Machine Learning Repository](https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance) which is collected and analyzed by Paulo Cortez and Alice Silva in 2008. The dataset contains information on 649 secondary school students from two Portuguese schools. For each student, school records and questionnaires were used to collect a wide range of variables describing academic performance, demographic characteristics, family background, and school-related behaviors. In total, there are 33 features per student, including grades, age, parental education, study time, and measures of social and family support.
+In terms of coming up with the idea for this project, our group was interested in learning more about the factors that influence student performance, being students ourselves. The data for this project comes from the Student Performance dataset.^[[Student Performance dataset hosted on the UC Irvine Machine Learning Repository](https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance)] which is collected and analyzed by Paulo Cortez and Alice Silva in 2008. The dataset contains information on 649 secondary school students from two Portuguese schools. For each student, school records and questionnaires were used to collect a wide range of variables describing academic performance, demographic characteristics, family background, and school-related behaviors. In total, there are 33 features per student, including grades, age, parental education, study time, and measures of social and family support.
 
 There are two datasets available on the website: one for mathematics achievement and one for Portuguese language achievement. In this project, we will focus on the mathematics dataset, where the main outcome variable of interest is G3, the final grade in the current course. This grade is recorded at the end of the year, and is intended to summarize each student's overall performance in mathematics. Another key variable for our study is failures, which records the number of past course failures for that student. We are interested in understanding how this history of prior failures relates to students' final performance in math, as measured by G3.
 
@@ -80,7 +80,7 @@ ggplot(df, aes(x = factor(has_failure, levels = c(0,1), labels = c("No Failures"
 
 The histogram with proportion passing G3 exam (Y-axis) grouped by prior course failures (X-Axis) helps visualize the second statistical method clearly showing the difference in proportion of students who passed the course and didn't pass the course. Based on if they had prior course failures.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 # Graph 3: Bar Chart of Proportions
 sum2 <- df %>%
   group_by(has_failure) %>%
