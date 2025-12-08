@@ -1,0 +1,202 @@
+---
+title: "Project Draft"
+author: "Noah Serrault, Owen Richards, Om Gulati"
+date: "2025-11-26"
+output: html_document
+---
+
+# Introduction
+
+Student performance is influenced by a variety of both personal and academic factors, but one consistent indicator is a student’s prior academic history. By understanding how past course failures relate to final math achievement, educators can identify at-risk students and design interventions. Our study seeks to answer the question: How are prior course failures related to students’ final math achievement? Through examining data from secondary students in Portugal, we look to find whether a pattern exists between the number of past failures and performance in a final math course. This report argues that the number of past course failures are negatively associated with the students’ final grade. Through visual and statistical analysis, we demonstrate that as the number of previous failures increases, the mean final grade tends to decrease.
+
+# Background
+
+In terms of coming up with the idea for this project, our group was interested in learning more about the factors that influence student performance, being students ourselves. The data for this project comes from the Student Performance dataset.^[[Student Performance dataset hosted on the UC Irvine Machine Learning Repository](https://uci-ics-mlr-prod.aws.uci.edu/dataset/320/student%2Bperformance)] which is collected and analyzed by Paulo Cortez and Alice Silva in 2008. The dataset contains information on 649 secondary school students from two Portuguese schools. For each student, school records and questionnaires were used to collect a wide range of variables describing academic performance, demographic characteristics, family background, and school-related behaviors. In total, there are 33 features per student, including grades, age, parental education, study time, and measures of social and family support.
+
+There are two datasets available on the website: one for mathematics achievement and one for Portuguese language achievement. In this project, we will focus on the mathematics dataset, where the main outcome variable of interest is G3, the final grade in the current course. This grade is recorded at the end of the year, and is intended to summarize each student's overall performance in mathematics. Another key variable for our study is failures, which records the number of past course failures for that student. We are interested in understanding how this history of prior failures relates to students' final performance in math, as measured by G3.
+
+There are a few other important considerations and limitations for interpreting our findings. First, the data comes from only two schools in Portugal, so the results may not generalize to all school systems or countries such as the United States. Second, data was collected in 2008, which was during a worldwide economic crisis. This could directly impact student performance, creating a statistical anomaly. 
+
+In the rest of the report, we plan to explore the relationship between prior failures and final math achievement using both graphical and statistical methods. We will use a welch two sample t-test, a two sample proportion test, box plot, scatter plot, and bar graph to analyze the relationship. 
+
+
+```{r, echo=FALSE, include=FALSE}
+library(dplyr)
+library(broom)    # for tidy() / glance() output (optional but nice)
+library(ggplot2)
+library(tidyr)
+library(knitr)
+
+df <- read.csv("student.csv", sep = ";")
+df
+df <- df %>%
+  transmute(
+    G3,
+    failures,
+    has_failure = as.integer(failures > 0),  # 0 = none, 1 = ≥1
+    pass_math   = as.integer(G3 >= 10)       # 0 = fail, 1 = pass
+  )
+
+summary(df$G3)
+table(df$has_failure)
+table(df$pass_math)
+
+# Method 1: Compare two population means (Welch two-sample t-test)
+# has failures vs no failures
+means_by_group <- df %>%
+  group_by(has_failure) %>%
+  summarise(n = n(), mean_G3 = mean(G3), sd_G3 = sd(G3), .groups = "drop")
+print(means_by_group)
+
+t_out <- t.test(G3 ~ has_failure, data = df, var.equal = FALSE, conf.level = 0.95)
+```
+
+### Data - Notes on data preperations
+
+In our data set we have many variables that could help us find what helps students. In this analysis we specifically are focusing on the column which includes the number of prior courses they have failed; ranging from 0-3. And their final exam score. Which is scored on a 0-20 scale. 
+
+To be considered passing the students must have a greater or equal to a 10/20 on the G3 exam which is processed into our proportion passing. And to be considered to have prior failures we consider anything greater then 0 prior course failures to be No Failures or Prior Failures.
+ 
+We do use the absolute number of course failures (0-3) in the scatter plot to extend our analysis beyond "has any failures".
+
+
+### Graphs
+
+The first box plot of the final G3 score (Y-axis) grouped by prior course failures (X-axis) helps to visualize the distribution of scores for students who did have, and did not have prior failures. Helping to visualize the first statistical analysis we did earlier looking at mean scores between students with past failures. With prior failures on the X axis and a box plot on the y axis with final G3 score.
+
+```{r, echo=FALSE}
+# Graph 1: Boxplot
+ggplot(df, aes(x = factor(has_failure, levels = c(0,1), labels = c("No Failures","Prior Failures")),
+               y = G3)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Final Grade (G3) by Prior Failures",
+    x = "Status",
+    y = "Final Grade (G3)"
+  ) +
+  theme_minimal()
+
+```
+
+The histogram with proportion passing G3 exam (Y-axis) grouped by prior course failures (X-Axis) helps visualize the second statistical method clearly showing the difference in proportion of students who passed the course and didn't pass the course. Based on if they had prior course failures.
+
+```{r, echo=FALSE, message=FALSE}
+# Graph 3: Bar Chart of Proportions
+sum2 <- df %>%
+  group_by(has_failure) %>%
+  summarise(
+    n = n(),
+    pass_rate = mean(pass_math),
+    .groups = "drop"
+  )
+
+ggplot(sum2, aes(x = factor(has_failure, levels = c(0,1), labels = c("No Failures","Prior Failures")),
+                 y = pass_rate)) +
+  geom_col(fill = "steelblue") +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(
+    title = "Proportion Passing (G3 ≥ 10) by Prior Failures",
+    x = "Status",
+    y = "Proportion Passing"
+  ) +
+  theme_minimal()
+```
+
+This scatter plot with Final Grade (G3) (Y-Axis) with number of course failures (X-Axis) helps to visualize the relationship between 0, 2, and 3 course failures and the students final G3 score. Plotting the line using a scatter plot and a line of best fit. With the number of course failures on the X axis and the students final G3 score on the Y axis.
+
+``` {r, echo=FALSE, message=FALSE}
+
+# Graph 2: Jitter + Regression
+ggplot(df, aes(x = failures, y = G3)) +
+  geom_jitter(width = 0.1, height = 0, alpha = 0.7) +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  labs(
+    title = "Relationship Between Number of Failures and Final Grade",
+    x = "Number of Prior Failures",
+    y = "Final Grade (G3)"
+  ) +
+  theme_minimal()
+
+```
+
+# Analysis 
+
+#### Statistical Analysis 
+
+First, we compared the average final grades of students who had never failed a class against those who had. We used a Welch Two Sample t-test to see if the difference was real or just random chance.
+
+**Hypotheses:**
+* **Null Hypothesis (H0):** The average grade is the same for both groups.
+* **Alternative Hypothesis (HA):** The average grade is different between the two groups.
+
+**Results:**
+The test showed a significant difference (p < 0.001).
+* Students with **no past failures** had an average score of **11.25** (out of 20).
+* Students with **past failures** had an average score of **7.27**.
+* This confirms that students with prior failures score significantly lower on average.
+
+```{r, echo=FALSE}
+t = tidy(t_out)
+kable(t, digits = 10, caption = "Welch Two Sample t-test Results")
+```
+
+
+```{r, echo=FALSE, include=FALSE}
+tab <- with(df, table(has_failure, pass_math))
+print(tab)
+
+# Order groups as: 0 failures, then ≥1 failure
+x <- c(tab["0","1"], tab["1","1"])                 
+n <- c(sum(tab["0",]),  sum(tab["1",]))         
+phat <- x / n
+data.frame(group = c("no failure", ">=1 failure"), n, successes = x, phat)
+
+prop_out <- prop.test(x = x, n = n, correct = FALSE, conf.level = 0.95)
+print(prop_out)
+```
+
+--------------------
+
+Next, we looked at pass rates (scoring 10 or higher). We used a Two-Sample Proportion Test to compare the two groups.
+
+**Hypotheses:**
+* **Null Hypothesis (H0):** The pass rate is the same for both groups.
+* **Alternative Hypothesis (HA):** The pass rate is different between the two groups.
+
+**Results:**
+The test showed a significant difference (p < 0.001).
+* **75%** of students with **no past failures** passed the course.
+* Only **37.3%** of students with **past failures** passed.
+* This shows a strong link between having failed before and failing again.
+
+```{r, echo=FALSE}
+prop_results <- tidy(prop_out)
+
+# Print the table nicely for HTML output
+kable(prop_results, digits = 10, caption = "Two-Sample Proportion Test Results")
+```
+
+
+# Discussion
+
+### Interpretation
+
+Looking at our statistical analysis and graphs in more depth we can see a clear relationship between a students final exam score (G3) and it's relationship with a students past failures (0-3). This can first be seen in the statistically significant two sample t-test where a student who has no past failures has a mean G3 score of 11.253 out of 20; a passing grade. Compared to a student who has 0-3 past failures we can see that their mean is 7.265. Which is considered a failing grade and significantly lower then a student with no past failures with a difference of 4/20 points. Which can seem small but accounts for almost 20% of the final exam's grade. 
+
+Looking at the analysis we can further see this in the two sample proportion test. With students with no prior failures passing 75% of the time compared to student with (0-3) past failures passing 37% of the time with a difference of 38%. A significant difference which can help indicate students who are at risk of failing future classes based on previous ones. Both tests are significant.
+
+Our graphs help visualize these trends more clearly but we included one more that helps elucidate the negative linear relationship between prior course failures and G3 score more clearly. In the last graph we have a scatter plot with number of prior course failures on the X axis with students final G3 score plotted on the Y axis. Looking at this graph we can see that there is not only a negative relationship between past course failures and final G3 score. But one that gets increasingly bigger as students have more and more prior course failures. At the extreme end of the graph we can see that students with 3 prior course failures have almost no students with a final G3 score >10 indicating almost all of them failed with a course cutoff of greater or equal to 10. 
+
+Based on all of this we can make a clear interpretation on the negative impact prior course failures have on final exam grades. Helping to find kids that are at risk of failing future courses and helping them receive the help they need to succeed. 
+
+### Looking forward
+
+Even though this analysis looks clear cut there are a number of things that could be improved in future analysis. In the data set there are a myriad of variables that could also be included to help highlight at risk students like "travel time", "study time", or even looking at midterm grades "G1", and "G2" and while looking at prior course failures looks at one variable it doesn't look at the holistic picture of a student and the other factors that could influence course failures.
+
+
+
+
+
+
+
+
